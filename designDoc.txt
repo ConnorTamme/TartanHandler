@@ -29,3 +29,9 @@ Psuedocode for bash:
         rm -rf data that was trained on
         unzip new data
         rm -f zip file
+
+
+Issues:
+    -Unzipping is apparently the real bottleneck as it can take +15 minutes to
+    unzip one file. NEED to have a way for the unzipping to start ASAP after
+    the file is downloaded.

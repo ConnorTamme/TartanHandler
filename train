@@ -18,12 +18,11 @@ then
     exit 0
 fi
 
-python testDownloader.py 0 &
+python download_training.py 0 &
 pid1=$!
 wait $pid1
 
-unzip ./tmp/newData/*.zip -d ./tmp/data/train/
-unzip ./tmp/newData/*.zip -d ./tmp/data/valid/
+unzip -q ./tmp/newData/*.zip -d ./tmp/data/train/
 
 rm -rf ./tmp/newData/*
 
@@ -33,22 +32,21 @@ while [ $cur -lt ${lines[0]} ]
 do
     python testDownloader.py $cur &
     pid1=$!   
-    python Numbers.py &
+    python download_training.py $cur &
     pid2=$!
     wait $pid1 $pid2
     
     rm -rf ./tmp/data/train/*
     rm -rf ./tmp/data/valid/*
 
-    unzip ./tmp/newData/*.zip -d ./tmp/data/train/
-    unzip ./tmp/newData/*.zip -d ./tmp/data/valid/
+    unzip -q ./tmp/newData/*.zip -d ./tmp/data/train/
 
     rm -rf ./tmp/newData/*
 
     cur=$((cur + 1))
 done
 
-python Numbers.py &
+python testDownloader.py 0 &
 pid2=$!
 wait $pid2
 
