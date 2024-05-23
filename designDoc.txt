@@ -1,0 +1,31 @@
+Problem:
+    TartanAir is too big so each zip needs to be downloaded, trained on, and 
+    then deleted continuously.
+General Solution:
+    Using a bash script to coordinate +2 python programs can solve the problem
+    Will need a python program that can download any of the zip files from
+    TartanAir when called. The provided code has a porgram that downloads all
+    zip files taht are named in a .txt. I think this could be reverse 
+    engineered to work as I want it to or used as is if the bash script can 
+    rewrite the contents of the .txt to control what it downloads. The rest
+    of the python files are to use the downloaded data. It comes in various 
+    formats such as .png or .npy so multiple programs to deal with each one
+    seems simplest to me or it could be passed as an arguement to just one
+    python program. The bash script should run the training and downloading
+    in parallel whenever possible to maximize efficiency (time to train should
+    be limiting factor not download time). Although it may not matter the
+    bash script is also responsible for ensuring the file structure is as 
+    expected by the python
+
+Psuedocode for bash:
+    call download python
+    wait until its done
+    unzip new data
+    rm -f zip file
+    while there is files left to train on
+        call download python
+        call training python for file type last downloaded
+        wait until both finish
+        rm -rf data that was trained on
+        unzip new data
+        rm -f zip file

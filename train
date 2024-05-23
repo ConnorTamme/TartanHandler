@@ -1,0 +1,57 @@
+#!/bin/bash
+
+if [ -d "./tmp" ]
+then
+    rm -rf ./tmp
+fi
+mkdir ./tmp
+mkdir ./tmp/data
+mkdir ./tmp/data/train
+mkdir ./tmp/data/valid
+mkdir ./tmp/newData
+
+lines=$(wc -l filetocopy.txt)
+lines=($lines)
+echo $lines
+if [ ${lines[0]} -lt 1 ]
+then
+    exit 0
+fi
+
+python testDownloader.py 0 &
+pid1=$!
+wait $pid1
+
+unzip ./tmp/newData/*.zip -d ./tmp/data/train/
+unzip ./tmp/newData/*.zip -d ./tmp/data/valid/
+
+rm -rf ./tmp/newData/*
+
+cur=1
+
+while [ $cur -lt ${lines[0]} ]
+do
+    python testDownloader.py $cur &
+    pid1=$!   
+    python Numbers.py &
+    pid2=$!
+    wait $pid1 $pid2
+    
+    rm -rf ./tmp/data/train/*
+    rm -rf ./tmp/data/valid/*
+
+    unzip ./tmp/newData/*.zip -d ./tmp/data/train/
+    unzip ./tmp/newData/*.zip -d ./tmp/data/valid/
+
+    rm -rf ./tmp/newData/*
+
+    cur=$((cur + 1))
+done
+
+python Numbers.py &
+pid2=$!
+wait $pid2
+
+rm -rf ./tmp
+
+exit 1

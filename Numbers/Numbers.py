@@ -149,6 +149,6 @@ out = torchvision.utils.make_grid(inputs)
 imshow(out, title=[types[x] for x in classes])
 #end of stuff for visualizing
 
-visualize_model(model, num_images=6)
+#visualize_model(model, num_images=6)
 torch.save(model, './model.pt')
-input()
+#input()
