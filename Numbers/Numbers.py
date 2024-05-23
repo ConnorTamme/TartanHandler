@@ -114,7 +114,6 @@ images = {x: datasets.ImageFolder(os.path.join(data_dir, x), transform[x])
 #dictionary to make it easy to access the data for training
 data = {x: torch.utils.data.DataLoader(images[x], batch_size=5,shuffle=True,
         num_workers=4) for x in ['train', 'valid']}
-print(data)
 #amounts of each type of image
 image_amounts = {'train' : len(images['train']), 'valid': len(images['valid'])}
 
@@ -123,11 +122,12 @@ types = images['train'].classes
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-model = models.resnet18(weights="IMAGENET1K_V1")
-
-num_ftrs = model.fc.in_features #Used to keep input features consistent
-
-model.fc = torch.nn.Linear(num_ftrs,10) #Replace model head 
+try:
+    model = torch.load('./model.pt')
+except:
+    model = models.resnet18(weights="IMAGENET1K_V1")
+    num_ftrs = model.fc.in_features #Used to keep input features consistent
+    model.fc = torch.nn.Linear(num_ftrs,10) #Replace model head 
 
 model.to(device)
 
@@ -150,5 +150,5 @@ imshow(out, title=[types[x] for x in classes])
 #end of stuff for visualizing
 
 visualize_model(model, num_images=6)
-
+torch.save(model, './model.pt')
 input()
