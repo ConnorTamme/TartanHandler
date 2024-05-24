@@ -112,6 +112,8 @@ if __name__ == '__main__':
     file = open('./utils/download_training_zipfiles.txt')
 
     content = file.readlines()
+    if int(sys.argv[1]) >= len(content):
+        exit()
     for i in range(0, len(content)):
         content[i] = content[i].strip('\n')
     downloadlist = [content[int(sys.argv[1])]]

@@ -5,33 +5,42 @@ General Solution:
     Using a bash script to coordinate +2 python programs can solve the problem
     Will need a python program that can download any of the zip files from
     TartanAir when called. The provided code has a porgram that downloads all
-    zip files taht are named in a .txt. I think this could be reverse 
-    engineered to work as I want it to or used as is if the bash script can 
-    rewrite the contents of the .txt to control what it downloads. The rest
+    zip files that are named in a .txt. This was reverse engineered to now
+    download the file at the given index in the large file. The rest
     of the python files are to use the downloaded data. It comes in various 
     formats such as .png or .npy so multiple programs to deal with each one
     seems simplest to me or it could be passed as an arguement to just one
     python program. The bash script should run the training and downloading
     in parallel whenever possible to maximize efficiency (time to train should
-    be limiting factor not download time). Although it may not matter the
+    be limiting factor not download time). To parallelize the downloading and
+    unzipping a download handling bash script will be used so that it can deal
+    with coordinating the downloads and it finishing will tell the main bash
+    script when things are done. Although it may not matter the
     bash script is also responsible for ensuring the file structure is as 
     expected by the python
 
 Psuedocode for bash:
-    call download python
+    call download bash
     wait until its done
-    unzip new data
-    rm -f zip file
     while there is files left to train on
-        call download python
+        call download bash
         call training python for file type last downloaded
         wait until both finish
-        rm -rf data that was trained on
-        unzip new data
-        rm -f zip file
+        get rid of old data
 
-
-Issues:
+Solved Issues:
     -Unzipping is apparently the real bottleneck as it can take +15 minutes to
     unzip one file. NEED to have a way for the unzipping to start ASAP after
-    the file is downloaded.
+    the file is downloaded. (Reworking downloading to be more parallelizable
+    allowed me to fix this so 'downloading' now includes the unzipping time)
+Issues:
+    -At the moment the python dealing with the training has to save and
+    load the model every time. This might not matter or it might matter not
+    sure yet. (The fix is finding a way to let the training python never stop
+    and have 2 way communication so the bash can tell it what and when to train
+    and the python can tell bash when its done. If one process started them 
+    both it could pass its PID to both and then by writing to /proc/PID/0 each
+    process could write to the stdin of the overseer which although very jank
+    might work. Or it might have race issues)
+    -Will need to do some work to ensure the python training the model is 
+    training on the right data
