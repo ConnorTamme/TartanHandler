@@ -134,7 +134,7 @@ if __name__ == '__main__':
     all_size = get_size(content_list, downloadlist)
     print('*** Total Size: {} GB ***'.format(all_size/1000000000))
 
-    download_from_cloudflare_r2(s3, downloadlist, "./tmp/newData", bucket_name)
+    download_from_cloudflare_r2(s3, downloadlist, "./tmp/newData/" + sys.argv[2], bucket_name)
 
     # for fileurl in downloadlist:
     #     zf = fileurl.split('/')
