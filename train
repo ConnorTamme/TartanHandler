@@ -1,6 +1,11 @@
 #!/bin/bash
 #$1 = how many files to download at once
 
+if [ $# -ne 1 ]
+then
+    echo "Incorrect number of cmd line args (Should be 1 : ./train num_parallel_downloads)"
+    exit 0
+fi
 if [ -d "./tmp" ]
 then
     rm -rf ./tmp
@@ -15,36 +20,34 @@ batch=0
 curIdx=0
 lines=$(wc -l filetocopy.txt)
 lines=($lines)
-echo $lines
 if [ ${lines[0]} -lt 1 ]
 then
     exit 0
 fi
-
-./downloadHandler $batch $curIdx (($curIdx + $1)) &
+./utils/downloadHandler.sh $batch $curIdx $(( $curIdx + $1 )) &
 pid1=$!
 wait $pid1
 
-batch=(($batch + 1))
-curIdx=(($curIdx + $1))
+batch=$(( $batch + 1 ))
+curIdx=$(( $curIdx + $1 ))
 
 while [ $curIdx -lt ${lines[0]} ]
 do
     #model must take in batch number so it knows what data to use
-    #python model.py (($batch - 1)) &
+    #python model.py $(( $batch - 1 )) &
     #pid1=$!   
-    ./downloadHandler $batch $curIdx (($curIdx + $1)) &
+    ./utils/downloadHandler.sh $batch $curIdx $(( $curIdx + $1 )) &
     pid2=$!
-    batch=(($batch + 1))
-    curIdx=(($curIdx + $1))
+    batch=$(( $batch + 1 ))
+    curIdx=$(( $curIdx + $1 ))
     #wait $pid1 $pid2
     wait $pid2
     
-    rm -rf ./tmp/data/B(($batch - 1))
+    rm -rf ./tmp/data/B$(( $batch - 1 ))
 
 done
 
-#python model.py (($batch - 1)) &
+#python model.py $(( $batch - 1 )) &
 #pid1=$!  
 #wait $pid1
 

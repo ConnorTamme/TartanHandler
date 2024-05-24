@@ -109,7 +109,7 @@ if __name__ == '__main__':
     secret_key = "103fab752dab348fa665dc744be9b8fb6f9cf04f82f9409d79c54a88661a0d40"
     endpoint_url = "https://0a585e9484af268a716f8e6d3be53bbc.r2.cloudflarestorage.com"
 
-    file = open('download_training_zipfiles.txt')
+    file = open('./utils/download_training_zipfiles.txt')
 
     content = file.readlines()
     for i in range(0, len(content)):
